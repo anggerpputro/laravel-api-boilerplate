@@ -17,6 +17,7 @@ Route::group([
 
     'middleware' => 'api',
     'prefix' => 'auth'
+    'namespace' => 'Api'
 
 ], function ($router) {
     Route::post('login', 'AuthController@login');
@@ -25,6 +26,13 @@ Route::group([
     Route::post('me', 'AuthController@me');
 });
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+/**
+ * ===============
+ * RESOURCES APIs
+ * -----
+ */
+Route::middleware(['auth:api'])->namespace('Api\Resources')->group(function () {
+    Route::apiResources([
+        'users'		=> 'UserResourceController',
+    ]);
 });

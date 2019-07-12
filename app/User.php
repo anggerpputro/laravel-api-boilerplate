@@ -8,10 +8,14 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements JWTSubject
+use App\Contracts\MainModelContract;
+use App\Traits\MainModelAbilities;
+
+class User extends Authenticatable implements JWTSubject, MainModelContract
 {
     use Notifiable,
-        HasRoles;
+        HasRoles,
+        MainModelAbilities;
 
     /**
      * The attributes that are mass assignable.
