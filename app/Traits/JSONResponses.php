@@ -70,22 +70,22 @@ trait JSONResponses
      */
     protected function responseSuccess($data= [], $message= 'Success!')
     {
-        $data['message'] = $message;
+        // $data['message'] = $message;
         return $this->response(static::$STATUS_OK, $data, $message);
     }
 
     /**
-     * ERROR RESPONSE (500)
+     * BAD REQUEST RESPONSE (400)
      *
      * @param array $data response data
-     * @param string $message (default:'Error!')
+     * @param string $message (default:'Bad Request!')
      *
      * @return json
      */
-    protected function responseError($data= [], $message= 'Error!')
+    protected function responseBadRequest($data= [], $message= 'Bad Request!')
     {
-        $data['message'] = $message;
-        return $this->response(static::$STATUS_SERVER_ERROR, $data, $message);
+        // $data['message'] = $message;
+        return $this->response(static::$STATUS_BAD_REQUEST, $data, $message);
     }
 
     /**
@@ -98,7 +98,7 @@ trait JSONResponses
      */
     protected function responseUnauthorized($data= [], $message= 'Unauthorized!')
     {
-        $data['message'] = $message;
+        // $data['message'] = $message;
         return $this->response(static::$STATUS_UNAUTHORIZED, $data, $message);
     }
 
@@ -112,7 +112,61 @@ trait JSONResponses
      */
     protected function responseForbidden($data= [], $message= 'Forbidden!')
     {
-        $data['message'] = $message;
+        // $data['message'] = $message;
         return $this->response(static::$STATUS_FORBIDDEN, $data, $message);
+    }
+
+    /**
+     * ERROR RESPONSE (500)
+     *
+     * @param array $data response data
+     * @param string $message (default:'Error!')
+     *
+     * @return json
+     */
+    protected function responseError($data= [], $message= 'Server Error!')
+    {
+        // $data['message'] = $message;
+        return $this->response(static::$STATUS_SERVER_ERROR, $data, $message);
+    }
+
+    /**
+     * ERROR RESPONSE (500)
+     *
+     * @param \Exception $exception exception
+     *
+     * @return json
+     */
+    protected function responseException($exception)
+    {
+        \Log::error($exception->getMessage());
+        \Log::error($exception->getTraceAsString());
+
+        if (env('APP_DEBUG')) {
+            return $this->responseError([
+                'error' => $exception->getMessage(),
+                'trace' => $exception->getTrace()
+            ]);
+        } else {
+            return $this->responseError([
+                'error' => $exception->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * SUCCESS (200) OR ERROR RESPONSE (500)
+     *
+     * @param array $data response data
+     *
+     * @return json
+     */
+    protected function responseSuccessOrException($data)
+    {
+        try {
+            return $this->responseSuccess($data);
+        } catch (\Exception $e) {
+            return $this->responseException($e);
+        }
     }
 }

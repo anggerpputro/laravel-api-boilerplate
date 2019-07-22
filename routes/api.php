@@ -13,15 +13,18 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group([
-
-    'middleware' => 'api',
-    'prefix' => 'auth'
-    'namespace' => 'Api'
-
-], function ($router) {
+Route::middleware(['api'])->namespace('Api')->group(function () {
+    Route::post('register', 'AuthController@register');
     Route::post('login', 'AuthController@login');
     Route::post('logout', 'AuthController@logout');
+});
+
+/**
+ * ===============
+ * /auth
+ * -----
+ */
+Route::middleware(['auth:api'])->namespace('Api')->prefix('auth')->group(function () {
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
 });

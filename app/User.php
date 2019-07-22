@@ -2,20 +2,39 @@
 
 namespace App;
 
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Auth\MustVerifyEmail;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+
+use App\Core\CoreModel;
+
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
 use App\Contracts\MainModelContract;
 use App\Traits\MainModelAbilities;
 
-class User extends Authenticatable implements JWTSubject, MainModelContract
+class User extends CoreModel implements
+    AuthenticatableContract,
+    AuthorizableContract,
+    CanResetPasswordContract,
+    JWTSubject,
+    MainModelContract
 {
-    use Notifiable,
+    use Authenticatable,
+        Authorizable,
+        CanResetPassword,
+        MustVerifyEmail,
+        Notifiable,
         HasRoles,
         MainModelAbilities;
+
+    protected $guard_name = 'api';
 
     /**
      * The attributes that are mass assignable.
@@ -23,7 +42,7 @@ class User extends Authenticatable implements JWTSubject, MainModelContract
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'avatar',
     ];
 
     /**
@@ -32,7 +51,7 @@ class User extends Authenticatable implements JWTSubject, MainModelContract
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'updated_at', 'deleted_at',
     ];
 
     /**
@@ -68,10 +87,23 @@ class User extends Authenticatable implements JWTSubject, MainModelContract
     /**==========
      * MUTATORS
     **/
+    public function setNameAttribute($name)
+    {
+        if (empty($name)) {
+            $this->attributes['name'] = $this->attributes['email'];
+        } else {
+            $this->attributes['name'] = $name;
+        }
+    }
+
     public function setPasswordAttribute($password)
     {
         if (!empty($password)) {
             $this->attributes['password'] = bcrypt($password);
         }
     }
+
+    /**==========
+     * RELATIONS
+    **/
 }
