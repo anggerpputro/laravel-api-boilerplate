@@ -25,9 +25,10 @@ Route::middleware(['api'])->namespace('Api')->group(function () {
  * -----
  */
 Route::middleware(['auth:api'])->namespace('Api')->prefix('auth')->group(function () {
-    Route::post('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me');
+    Route::get('refresh', 'AuthController@refresh');
+    Route::get('me', 'AuthController@me');
 });
+
 
 /**
  * ===============
@@ -36,6 +37,16 @@ Route::middleware(['auth:api'])->namespace('Api')->prefix('auth')->group(functio
  */
 Route::middleware(['auth:api'])->namespace('Api\Resources')->group(function () {
     Route::apiResources([
-        'users'		=> 'UserResourceController',
+        'users' => 'UserResourceController',
+        'roles'	=> 'RoleResourceController',
+        'permissions' => 'PermissionResourceController',
     ]);
+});
+
+/**
+ * ===============
+ * RESOURCES APIs (PUBLIC)
+ * -----
+ */
+Route::middleware(['api'])->namespace('Api\Resources')->group(function () {
 });

@@ -42,7 +42,7 @@ class User extends CoreModel implements
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'avatar',
+        'name', 'username', 'email', 'password', 'avatar',
     ];
 
     /**
@@ -90,7 +90,7 @@ class User extends CoreModel implements
     public function setNameAttribute($name)
     {
         if (empty($name)) {
-            $this->attributes['name'] = $this->attributes['email'];
+            $this->attributes['name'] = $this->attributes['username'];
         } else {
             $this->attributes['name'] = $name;
         }
@@ -105,5 +105,9 @@ class User extends CoreModel implements
 
     /**==========
      * RELATIONS
+    **/
+
+    /**==========
+     * SCOPES
     **/
 }

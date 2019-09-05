@@ -24,5 +24,5 @@ abstract class CoreModel extends Model implements MainModelContract
      *
      * @var array
      */
-    protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
+    protected $hidden = ['updated_at', 'deleted_at'];
 }

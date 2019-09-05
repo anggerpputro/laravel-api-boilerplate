@@ -1,8 +1,8 @@
 <?php
 namespace App\Core;
 
-abstract class CoreRestResponse {
-
+abstract class CoreRestResponse
+{
     public static $STATUS_OK = 200;
 
     public static $STATUS_BAD_REQUEST = 400;
@@ -12,7 +12,8 @@ abstract class CoreRestResponse {
 
     public static $STATUS_SERVER_ERROR = 500;
 
-    protected function encapsulateResponse($status, $data, $message = null) {
+    protected function encapsulateResponse($status, $data, $message = null)
+    {
         return [
             'status' => $status,
             'message' => empty($message) ? $status : $message,
@@ -20,7 +21,8 @@ abstract class CoreRestResponse {
         ];
     }
 
-    public function responseDefault($data, $message = null) {
+    public function responseDefault($data, $message = null)
+    {
         try {
             return response()->json(
                 $this->encapsulateResponse(
@@ -31,7 +33,7 @@ abstract class CoreRestResponse {
                 self::$STATUS_OK
             );
         } catch (\Exception $e) {
-            if(env('APP_DEBUG')) {
+            if (env('APP_DEBUG')) {
                 $data = $e->getTrace();
                 $message = $e->getMessage();
             } else {
@@ -50,7 +52,6 @@ abstract class CoreRestResponse {
         }
     }
 
-    public abstract function responseOk($data, $message = null);
-    public abstract function responseServerError($data, $message = null);
-
+    abstract public function responseOk($data, $message = null);
+    abstract public function responseServerError($data, $message = null);
 }

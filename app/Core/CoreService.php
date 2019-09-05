@@ -35,7 +35,7 @@ class CoreService
     /**
      * Get a listing of the resource.
     **/
-    public function listAll($model = null)
+    public function listAll($model = null, $disable_search = false)
     {
         try {
             if (! is_null($model)) {
@@ -46,7 +46,7 @@ class CoreService
                 $this->model = $this->model->with($this->with);
             }
 
-            if (request()->has('search')) {
+            if (request()->has('search') && !$disable_search) {
                 $search = request('search');
                 $search_field = request()->has('search_field') ? request('search_field') : '';
 
@@ -58,6 +58,9 @@ class CoreService
 
             $this->model = $this->model->order($order, $atoz);
 
+            if (request()->has('page_len') && request('page_len') == 'all') {
+                return $this->model->paginate(999);
+            }
             return $this->model->paginate(
                 request()->has('page_len')
                 ? request('page_len')

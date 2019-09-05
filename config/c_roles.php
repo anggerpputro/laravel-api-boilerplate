@@ -2,6 +2,4 @@
 return [
     "developer",
     "admin",
-    "verificator",
-    "opd",
 ];

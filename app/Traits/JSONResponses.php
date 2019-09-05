@@ -32,6 +32,20 @@ trait JSONResponses
     protected function response($status, $data, $message = null)
     {
         try {
+            $accept_encoding = request()->header('accept-encoding');
+
+            $headers = [
+                'Content-type' => 'application/json; charset=utf-8',
+            ];
+
+            if (substr_count($accept_encoding, "gzip")) {
+                $headers['Content-Encoding'] = 'gzip';
+                ob_start('ob_gzhandler');
+            } else {
+                // $headers['Transfer-Encoding'] = 'chunk';
+                ob_start();
+            }
+
             return response()->json(
                 $this->encapsulateResponse(
                     $status,
@@ -39,7 +53,7 @@ trait JSONResponses
                     $message
                 ),
                 $status
-            );
+            )->withHeaders($headers);
         } catch (\Exception $e) {
             if (env('APP_DEBUG')) {
                 $data = $e->getTrace();
@@ -117,6 +131,20 @@ trait JSONResponses
     }
 
     /**
+     * BAD REQUEST RESPONSE (404)
+     *
+     * @param array $data response data
+     * @param string $message (default:'Not Found!')
+     *
+     * @return json
+     */
+    protected function responseNotFound($data= [], $message= 'Not Found!')
+    {
+        // $data['message'] = $message;
+        return $this->response(static::$STATUS_NOT_FOUND, $data, $message);
+    }
+
+    /**
      * ERROR RESPONSE (500)
      *
      * @param array $data response data
@@ -161,10 +189,15 @@ trait JSONResponses
      *
      * @return json
      */
-    protected function responseSuccessOrException($data)
+    protected function responseSuccessOrException(callable $callback)
     {
         try {
+            $data = $callback();
             return $this->responseSuccess($data);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->responseNotFound([
+                'error' => $e->getMessage()
+            ]);
         } catch (\Exception $e) {
             return $this->responseException($e);
         }

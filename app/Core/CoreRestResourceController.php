@@ -13,6 +13,11 @@ abstract class CoreRestResourceController extends CoreRestController implements 
     protected $merge_store_data_with = [];
     protected $merge_update_data_with = [];
 
+    protected $cache_seconds = [
+        'index' => 0, // default 0 seconds
+        'show' => 0, // default 0 seconds
+    ];
+
     public function __construct(CoreModel $model = null, CoreResourceService $service = null, CoreRestResponse $response = null)
     {
         if (is_null($service)) {
@@ -57,9 +62,9 @@ abstract class CoreRestResourceController extends CoreRestController implements 
      */
     public function index()
     {
-        return $this->responseSuccessOrException(
-            $this->service->listAll()
-        );
+        return $this->responseSuccessOrException(function () {
+            return $this->service->listAll();
+        });
     }
 
     /**
@@ -120,7 +125,7 @@ abstract class CoreRestResourceController extends CoreRestController implements 
         try {
             return $this->service->findOrFail($id, $this->addWithOnShow);
         } catch (ModelNotFoundException $e) {
-            return $this->responseBadRequest([
+            return $this->responseNotFound([
                 'error' => 'ID:'.$id.' Not Found!'
             ]);
         } catch (\Exception $e) {
@@ -165,7 +170,7 @@ abstract class CoreRestResourceController extends CoreRestController implements 
             ]);
         } catch (ModelNotFoundException $e) {
             \DB::rollback();
-            return $this->responseBadRequest([
+            return $this->responseNotFound([
                 'error' => 'ID:'.$id.' Not Found!'
             ]);
         } catch (\Exception $e) {
@@ -194,7 +199,7 @@ abstract class CoreRestResourceController extends CoreRestController implements 
                 'deleted' => $data
             ]);
         } catch (ModelNotFoundException $e) {
-            return $this->responseBadRequest([
+            return $this->responseNotFound([
                 'error' => 'ID:'.$id.' Not Found!'
             ]);
         } catch (\Exception $e) {

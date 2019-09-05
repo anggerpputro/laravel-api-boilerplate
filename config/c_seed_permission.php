@@ -18,30 +18,6 @@ return [
         "/auth/me" => [
             "permissions" => "a",
         ],
-
-        "/users" => [
-            "permissions" => "a,l,c,r,u,d",
-        ],
-        "/roles" => [
-            "permissions" => "a,l,c,r,u,d",
-        ],
-        "/opds" => [
-            "permissions" => "a,l,c,r,u,d",
-        ],
-
-        "/kotas" => [
-            "permissions" => "a,l,c,r,u,d",
-        ],
-        "/kecamatans" => [
-            "permissions" => "a,l,c,r,u,d",
-        ],
-        "/kelurahans" => [
-            "permissions" => "a,l,c,r,u,d",
-        ],
-
-        "/status-laporans" => [
-            "permissions" => "a,l,c,r,u,d",
-        ],
     ],
 
     "permissions" => [

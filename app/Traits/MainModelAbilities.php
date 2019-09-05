@@ -24,17 +24,22 @@ trait MainModelAbilities
     **/
     public function scopeSearch($query, $string, $field = '')
     {
+        $arr_date_fields = ['created_at', 'updated_at', 'deleted_at'];
+
         if (! empty($field)) {
-            return $query->where(function ($q) use ($string, $field) {
-                $q->orWhere($this->table.'.'.$field, 'LIKE', '%'.$string.'%');
-            });
+            if (in_array($field, $arr_date_fields)) {
+                return $this->getQueryDateSearch($query, $string, $field);
+            }
+
+            return $query->orWhere($this->getTable().'.'.$field, 'LIKE', '%'.$string.'%');
         } else {
             $primary = $this->getKeyName();
             $cols = $this->getTableColumns();
-            return $query->where(function ($q) use ($primary, $cols, $string) {
-                foreach ($cols as $col) {
+
+            return $query->where(function ($q) use ($primary, $cols, $string, $arr_date_fields) {
+                foreach (array_diff($cols, $arr_date_fields) as $col) {
                     if ($col !== $primary) {
-                        $q->orWhere($this->table.'.'.$col, 'LIKE', '%'.$string.'%');
+                        $q->orWhere($this->getTable().'.'.$col, 'LIKE', '%'.$string.'%');
                     }
                 }
             });
@@ -44,14 +49,39 @@ trait MainModelAbilities
     public function scopeOrder($query, $field = '', $asc_or_desc = 'asc')
     {
         if (! empty($field)) {
-            return $query->orderBy($this->table.'.'.$field, $asc_or_desc);
+            return $query->orderBy($this->getTable().'.'.$field, $asc_or_desc);
         } else {
-            return $query->orderBy($this->table.'.'.$this->primaryKey, $asc_or_desc);
+            return $query->orderBy($this->getTable().'.'.$this->primaryKey, $asc_or_desc);
         }
     }
 
     public function scopePerPage($query, $limit = 30)
     {
         return $query->limit($limit);
+    }
+
+
+    /**
+     * =========================
+     * PROTECTED METHODS
+     * ---------
+    **/
+    protected function getQueryDateSearch(&$query, $search, $search_field)
+    {
+        $strtotime = strtotime($search);
+        $year = date('Y', $strtotime);
+        $month = date('m', $strtotime);
+
+        switch (strlen($search)) {
+            case 10:
+                return $query->whereDate($this->getTable().'.'.$search_field, $search);
+            case 7:
+                return $query->whereYear($this->getTable().'.'.$search_field, $year)
+                            ->whereMonth($this->getTable().'.'.$search_field, $month);
+            case 4:
+                return $query->whereYear($this->getTable().'.'.$search_field, $year);
+            default:
+                return $query;
+        }
     }
 }
