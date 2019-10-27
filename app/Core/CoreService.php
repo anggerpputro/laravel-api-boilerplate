@@ -46,17 +46,52 @@ class CoreService
                 $this->model = $this->model->with($this->with);
             }
 
+            $search = null;
+            $search_field = null;
+            $search_mode = null;
+            $search_exact = false;
             if (request()->has('search') && !$disable_search) {
                 $search = request('search');
                 $search_field = request()->has('search_field') ? request('search_field') : '';
+                $search_mode = request()->has('search_mode') ? request('search_mode') : 'or';
+                $search_exact = false;
+            } elseif (request()->has('search_exact') && !$disable_search) {
+                $search = request('search_exact');
+                $search_field = request()->has('search_field') ? request('search_field') : '';
+                $search_mode = request()->has('search_mode') ? request('search_mode') : 'or';
+                $search_exact = true;
+            }
 
-                $this->model = $this->model->search($search, $search_field);
+            if (! is_null($search)) {
+                // support multiple search
+                if (! is_array($search)) {
+                    $search = [$search];
+                }
+                if (! is_array($search_field)) {
+                    $search_field = [$search_field];
+                }
+
+                if ($search_exact) {
+                    $this->model = $this->model->searchExactMultiple($search, $search_field, $search_mode);
+                } else {
+                    $this->model = $this->model->searchMultiple($search, $search_field, $search_mode);
+                }
             }
 
             $order = request()->has('order') ? request('order') : $this->modelPrimaryKeyName;
             $atoz = request()->has('atoz') ? request('atoz') : 'asc';
 
-            $this->model = $this->model->order($order, $atoz);
+            // support multiple order by
+            if (! is_array($order)) {
+                $order = [$order];
+            }
+            if (! is_array($atoz)) {
+                $atoz = [$atoz];
+            }
+            foreach ($order as $i => $order_item) {
+                $atoz_item = isset($atoz[$i]) ? $atoz[$i] : 'asc';
+                $this->model = $this->model->order($order_item, $atoz_item);
+            }
 
             if (request()->has('page_len') && request('page_len') == 'all') {
                 return $this->model->paginate(999);
@@ -92,6 +127,20 @@ class CoreService
         }
 
         return $this->model->findOrFail($id);
+    }
+
+    /**
+     * Get the specified resource.
+    **/
+    public function firstOrFail($model, $addWith = true)
+    {
+        $this->model = $model;
+
+        if (! empty($this->with) && $addWith) {
+            $this->model = $this->model->with($this->with);
+        }
+
+        return $this->model->firstOrFail();
     }
 
     /**

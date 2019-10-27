@@ -202,4 +202,29 @@ trait JSONResponses
             return $this->responseException($e);
         }
     }
+
+    /**
+     * SUCCESS (200) OR ERROR RESPONSE (500), Using Tansaction
+     *
+     * @param array $data response data
+     *
+     * @return json
+     */
+    protected function responseSuccessOrExceptionUsingTransaction(callable $callback)
+    {
+        \DB::beginTransaction();
+        try {
+            $data = $callback();
+            \DB::commit();
+            return $this->responseSuccess($data);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \DB::rollback();
+            return $this->responseNotFound([
+                'error' => $e->getMessage()
+            ]);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return $this->responseException($e);
+        }
+    }
 }
