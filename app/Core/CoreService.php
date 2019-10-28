@@ -1,9 +1,10 @@
 <?php
 namespace App\Core;
 
+use App\Contracts\CoreServiceContract;
 use App\Core\CoreModel;
 
-class CoreService
+class CoreService implements CoreServiceContract
 {
     protected $model;
     protected $with = [];
