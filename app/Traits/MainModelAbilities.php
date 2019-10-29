@@ -115,9 +115,19 @@ trait MainModelAbilities
                     }
 
                     if ($mode == 'or') {
-                        $q = $q->orWhere($this->getTable().'.'.$field_item, 'LIKE', $string_like);
+                        if (strpos($field_item, '.') !== false) {
+                            $exploded = explode('.', $field_item);
+                            $q = $this->getQueryOrWhereHas($q, $exploded[0], $exploded[1], 'LIKE', $string_like);
+                        } else {
+                            $q = $q->orWhere($this->getTable().'.'.$field_item, 'LIKE', $string_like);
+                        }
                     } else {
-                        $q = $q->where($this->getTable().'.'.$field_item, 'LIKE', $string_like);
+                        if (strpos($field_item, '.') !== false) {
+                            $exploded = explode('.', $field_item);
+                            $q = $this->getQueryWhereHas($q, $exploded[0], $exploded[1], 'LIKE', $string_like);
+                        } else {
+                            $q = $q->where($this->getTable().'.'.$field_item, 'LIKE', $string_like);
+                        }
                     }
                 }
             }
@@ -135,9 +145,19 @@ trait MainModelAbilities
                     $field_item = $field[$i];
 
                     if ($mode == 'or') {
-                        $q = $q->orWhere($this->getTable().'.'.$field_item, '=', $string_item);
+                        if (strpos($field_item, '.') !== false) {
+                            $exploded = explode('.', $field_item);
+                            $q = $this->getQueryOrWhereHas($q, $exploded[0], $exploded[1], '=', $string);
+                        } else {
+                            $q = $q->orWhere($this->getTable().'.'.$field_item, '=', $string);
+                        }
                     } else {
-                        $q = $q->where($this->getTable().'.'.$field_item, '=', $string_item);
+                        if (strpos($field_item, '.') !== false) {
+                            $exploded = explode('.', $field_item);
+                            $q = $this->getQueryWhereHas($q, $exploded[0], $exploded[1], '=', $string);
+                        } else {
+                            $q = $q->where($this->getTable().'.'.$field_item, '=', $string);
+                        }
                     }
                 }
             }
@@ -181,5 +201,19 @@ trait MainModelAbilities
             default:
                 return $query;
         }
+    }
+
+    protected function getQueryWhereHas(&$query, $relation_name, $col_name, $operator, $string_search)
+    {
+        return $query->whereHas($relation_name, function ($q) use ($col_name, $operator, $string_search) {
+            $q->where($col_name, $operator, $string_search);
+        });
+    }
+
+    protected function getQueryOrWhereHas(&$query, $relation_name, $col_name, $operator, $string_search)
+    {
+        return $query->orWhereHas($relation_name, function ($q) use ($col_name, $operator, $string_search) {
+            $q->where($col_name, $operator, $string_search);
+        });
     }
 }
