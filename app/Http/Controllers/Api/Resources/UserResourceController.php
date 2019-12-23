@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api\Resources;
 
-use App\Core\CoreRestResourceController;
+use Gemboot\Controllers\CoreRestResourceController as GembootController;
 
 use App\Libraries\ImageUploader;
 
@@ -13,7 +13,7 @@ use App\User;
  *
  * APIs for managing user
  */
-class UserResourceController extends CoreRestResourceController
+class UserResourceController extends GembootController
 {
     public function __construct(User $model)
     {

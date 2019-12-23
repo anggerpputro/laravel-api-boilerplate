@@ -10,29 +10,24 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
-use App\Core\CoreModel;
+use Gemboot\Models\CoreModel as GembootModel;
 
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-use App\Contracts\MainModelContract;
-use App\Traits\MainModelAbilities;
-
-class User extends CoreModel implements
+class User extends GembootModel implements
     AuthenticatableContract,
     AuthorizableContract,
     CanResetPasswordContract,
-    JWTSubject,
-    MainModelContract
+    JWTSubject
 {
     use Authenticatable,
         Authorizable,
         CanResetPassword,
         MustVerifyEmail,
         Notifiable,
-        HasRoles,
-        MainModelAbilities;
+        HasRoles;
 
     protected $guard_name = 'api';
 

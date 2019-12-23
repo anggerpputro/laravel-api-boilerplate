@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Support\Facades\Auth;
-use App\Core\CoreRestController;
+use Gemboot\Controllers\CoreRestController as GembootController;
 
 use Spatie\Permission\Models\Role;
 use App\User;
@@ -12,7 +12,7 @@ use App\User;
  *
  * APIs for authentication
  */
-class AuthController extends CoreRestController
+class AuthController extends GembootController
 {
     /**
      * Create a new AuthController instance.
