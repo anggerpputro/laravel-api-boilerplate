@@ -154,6 +154,53 @@ class AuthController extends GembootController
     }
 
     /**
+     * Validate Token.
+     *
+     * @authenticated
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function validateToken(Request $request)
+    {
+        return $this->responseSuccessOrException(function () use ($request) {
+            return [
+                "token-valid" => true,
+            ];
+        });
+    }
+
+    /**
+     * Update Profile.
+     *
+     * @authenticated
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateProfile(Request $request)
+    {
+        $validator = \Validator::make($request->all(), [
+            'name'      => 'required|string|max:20',
+            'password'  => 'sometimes|required|confirmed|string|min:4|max:20',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->responseBadRequest(['error' => $validator->errors()]);
+        }
+
+        return $this->responseSuccessOrException(function () use ($request) {
+            $user = auth()->user();
+            $user->nama = $request->nama;
+            if ($request->has('password')) {
+                $user->password = $request->password;
+                $user->pass = $request->password;
+            }
+            $user->save();
+
+            return [
+                'saved' => $user,
+            ];
+        });
+    }
+
+    /**
      * Get the token array structure.
      *
      * @param  string $token

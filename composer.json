@@ -10,11 +10,13 @@
     "require": {
         "php": "^7.2",
         "barryvdh/laravel-cors": "^0.11.3",
+        "doctrine/dbal": "^2.10",
         "fideloper/proxy": "^4.0",
         "gem-partij/gemboot-lara": "^1.0",
         "laravel/framework": "^6.0",
         "laravel/tinker": "^1.0",
         "mpociot/laravel-apidoc-generator": "^3.10",
+        "predis/predis": "^1.1",
         "spatie/laravel-permission": "^3.0",
         "tymon/jwt-auth": "1.0.*"
     },
@@ -41,6 +43,9 @@
         "psr-4": {
             "App\\": "app/"
         },
+        "files": [
+			"app/helpers.php"
+		],
         "classmap": [
             "database/seeds",
             "database/factories"

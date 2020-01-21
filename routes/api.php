@@ -27,6 +27,9 @@ Route::middleware(['api'])->namespace('Api')->prefix('auth')->group(function () 
 Route::middleware(['auth:api'])->namespace('Api')->prefix('auth')->group(function () {
     Route::get('refresh', 'AuthController@refresh');
     Route::get('me', 'AuthController@me');
+    Route::get('validate-token', 'AuthController@validateToken');
+
+    Route::post('update-profile', 'AuthController@updateProfile');
 });
 
 

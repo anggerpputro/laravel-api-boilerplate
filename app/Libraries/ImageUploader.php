@@ -62,4 +62,33 @@ class ImageUploader
             throw $e;
         }
     }
+
+    public function storeImageBase64($base64, $filename, $path = '')
+    {
+        try {
+            $exploded_comma = explode(",", $base64);
+
+            $exploded_tt_comma = explode(";", $exploded_comma[0]);
+            $exploded_slash = explode("/", $exploded_tt_comma[0]);
+            $filetype = $exploded_slash[1];
+
+            $cleaned = isset($exploded_comma[1]) ? $exploded_comma[1] : $exploded_comma[0];
+            $cleaned = str_replace(' ', '+', $cleaned);
+
+            $filename .= ".$filetype";
+
+            if (!empty($path)) {
+                $filename = $path.$filename;
+            }
+
+            Storage::disk('foto')->put($filename, base64_decode($cleaned));
+            $url = Storage::disk('foto')->url($filename);
+
+            return $url;
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            Log::error($e->getTraceAsString());
+            throw $e;
+        }
+    }
 }
