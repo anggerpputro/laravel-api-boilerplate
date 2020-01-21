@@ -1,0 +1,89 @@
+version: '3.7'
+services:
+
+    #PHP Service
+    service_pdamsurvey_app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: digitalocean.com/php
+        container_name: pdamsurvey_app
+        restart: unless-stopped
+        tty: true
+        environment:
+            SERVICE_NAME: service_pdamsurvey_app
+            SERVICE_TAGS: dev
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+            - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+        networks:
+            - pdamsurvey-network
+        depends_on:
+            - service_pdamsurvey_redis
+
+    #Nginx Service
+    service_pdamsurvey_webserver:
+        image: nginx:alpine
+        container_name: pdamsurvey_webserver
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "58000:80"
+            - "58443:443"
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+        networks:
+            - pdamsurvey-network
+        depends_on:
+            - service_pdamsurvey_app
+
+    #MySQL Service
+    service_pdamsurvey_mysql:
+        image: mysql:5.7
+        container_name: pdamsurvey_mysql
+        restart: unless-stopped
+        tty: true
+        hostname: pdamsurvey_mysql
+        ports:
+            - "53306:3306"
+        environment:
+            MYSQL_DATABASE: pdam_svr_koordinat
+            MYSQL_USER: angger
+            MYSQL_PASSWORD: pdamsurvey
+            MYSQL_ROOT_PASSWORD: 555hesoyam777
+            SERVICE_TAGS: dev
+            SERVICE_NAME: service_pdamsurvey_mysql
+        volumes:
+            - pdamsurvey_mysql-data:/var/lib/mysql
+            - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+        networks:
+            - pdamsurvey-network
+
+    #Redis Service
+    service_pdamsurvey_redis:
+        image: redis
+        container_name: pdamsurvey_redis
+        restart: unless-stopped
+        tty: true
+        command: ["redis-server", "--appendonly", "yes", "--requirepass", "555hesoyam777"]
+        hostname: pdamsurvey_redis
+        expose:
+            - 6379
+        volumes:
+            - pdamsurvey_redis-data:/data
+            - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+        networks:
+            - pdamsurvey-network
+
+#Docker Networks
+networks:
+    pdamsurvey-network:
+        driver: bridge
+
+#Volumes
+volumes:
+    pdamsurvey_mysql-data:
+        driver: local
+    pdamsurvey_redis-data:
