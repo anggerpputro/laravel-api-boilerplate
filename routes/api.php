@@ -13,24 +13,24 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware(['api'])->namespace('Api')->prefix('auth')->group(function () {
-    Route::post('register', 'AuthController@register');
-    Route::post('login', 'AuthController@login');
-    Route::post('logout', 'AuthController@logout');
-});
+// Route::middleware(['api'])->namespace('Api')->prefix('auth')->group(function () {
+//     Route::post('register', 'AuthController@register');
+//     Route::post('login', 'AuthController@login');
+//     Route::post('logout', 'AuthController@logout');
+// });
 
 /**
  * ===============
  * /auth
  * -----
  */
-Route::middleware(['auth:api'])->namespace('Api')->prefix('auth')->group(function () {
-    Route::get('refresh', 'AuthController@refresh');
-    Route::get('me', 'AuthController@me');
-    Route::get('validate-token', 'AuthController@validateToken');
-
-    Route::post('update-profile', 'AuthController@updateProfile');
-});
+// Route::middleware(['auth:api'])->namespace('Api')->prefix('auth')->group(function () {
+//     Route::get('refresh', 'AuthController@refresh');
+//     Route::get('me', 'AuthController@me');
+//     Route::get('validate-token', 'AuthController@validateToken');
+//
+//     Route::post('update-profile', 'AuthController@updateProfile');
+// });
 
 
 /**
