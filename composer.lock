@@ -586,16 +586,16 @@
         },
         {
             "name": "gem-partij/gemboot-lara",
-            "version": "1.0.11",
+            "version": "1.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gem-partij/gemboot-lara.git",
-                "reference": "b82da9a761ade095b687c8c48de4b5f37dfdea69"
+                "reference": "a09ce6de26c18fd95c7c49eb4b590d5f9bad8443"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gem-partij/gemboot-lara/zipball/b82da9a761ade095b687c8c48de4b5f37dfdea69",
-                "reference": "b82da9a761ade095b687c8c48de4b5f37dfdea69",
+                "url": "https://api.github.com/repos/gem-partij/gemboot-lara/zipball/a09ce6de26c18fd95c7c49eb4b590d5f9bad8443",
+                "reference": "a09ce6de26c18fd95c7c49eb4b590d5f9bad8443",
                 "shasum": ""
             },
             "require": {
@@ -604,6 +604,13 @@
                 "php": ">=7"
             },
             "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Gemboot\\GembootServiceProvider"
+                    ]
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Gemboot\\": "src/"
@@ -626,7 +633,7 @@
                 "laravel",
                 "php"
             ],
-            "time": "2020-02-07T06:33:21+00:00"
+            "time": "2020-02-07T06:58:25+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",

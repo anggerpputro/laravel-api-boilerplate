@@ -22,6 +22,7 @@ class Kernel extends HttpKernel
         \Barryvdh\Cors\HandleCors::class,
         // \App\Http\Middleware\CheckPermission::class,
         \App\Http\Middleware\HandleFormData::class,
+        \Gemboot\Gateway\Middleware\CheckToken::class,
     ];
 
     /**
