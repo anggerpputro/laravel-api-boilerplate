@@ -11,6 +11,7 @@
         "php": "^7.2",
         "doctrine/dbal": "^2.10",
         "fideloper/proxy": "^4.0",
+        "fruitcake/laravel-cors": "^1.0",
         "gem-partij/gemboot-lara": "^1.0",
         "laravel/framework": "^6.0",
         "laravel/tinker": "^1.0",
