@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 */
 
 Route::middleware(['api'])->namespace('Api')->prefix('auth')->group(function () {
-    Route::post('register', 'AuthController@register');
+    // Route::post('register', 'AuthController@register');
     Route::post('login', 'AuthController@login');
     Route::post('logout', 'AuthController@logout');
 });
@@ -29,7 +29,25 @@ Route::middleware(['auth:api'])->namespace('Api')->prefix('auth')->group(functio
     Route::get('me', 'AuthController@me');
     Route::get('validate-token', 'AuthController@validateToken');
 
-    Route::post('update-profile', 'AuthController@updateProfile');
+    // Route::post('update-profile', 'AuthController@updateProfile');
+});
+
+
+/**
+ * ===============
+ * APIs (AUTH)
+ * -----
+ */
+Route::middleware(['auth:api'])->namespace('Api')->group(function () {
+});
+
+
+/**
+ * ===============
+ * APIs (PUBLIC)
+ * -----
+ */
+Route::middleware(['api'])->namespace('Api')->group(function () {
 });
 
 
@@ -45,6 +63,7 @@ Route::middleware(['auth:api'])->namespace('Api\Resources')->group(function () {
         'permissions' => 'PermissionResourceController',
     ]);
 });
+
 
 /**
  * ===============

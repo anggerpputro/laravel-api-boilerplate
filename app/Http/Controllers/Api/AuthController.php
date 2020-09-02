@@ -161,11 +161,9 @@ class AuthController extends GembootController
      */
     public function validateToken(Request $request)
     {
-        return $this->responseSuccessOrException(function () use ($request) {
-            return [
-                "token-valid" => true,
-            ];
-        });
+        return response()->json([
+            "OK" => true,
+        ]);
     }
 
     /**
